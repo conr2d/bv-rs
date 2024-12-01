@@ -1,7 +1,8 @@
-use BlockType;
+use crate::BlockType;
 
-use std::cmp::min;
-use std::ptr;
+use alloc::{boxed::Box, vec};
+use core::cmp::min;
+use core::ptr;
 
 #[derive(Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
@@ -30,7 +31,7 @@ impl<Block: BlockType> Inner<Block> {
     fn invariant(&self) -> bool {
         match self.0 {
             Some(ref b) => b.len() > 0,
-            None        => true,
+            None => true,
         }
     }
 
@@ -51,7 +52,7 @@ impl<Block: BlockType> Inner<Block> {
 
         let mut result = vec![Block::zero(); new_cap].into_boxed_slice();
 
-        for i in 0 .. min(len, new_cap) {
+        for i in 0..min(len, new_cap) {
             result[i] = self.get_block(i);
         }
 
@@ -61,7 +62,7 @@ impl<Block: BlockType> Inner<Block> {
     pub fn len(&self) -> usize {
         match self.0 {
             Some(ref b) => b.len(),
-            None        => 0,
+            None => 0,
         }
     }
 
@@ -71,20 +72,20 @@ impl<Block: BlockType> Inner<Block> {
     }
 
     pub fn into_boxed_slice(self) -> Box<[Block]> {
-        self.0.unwrap_or_else(<Box<[Block]>>::default)
+        self.0.unwrap_or_default()
     }
 
     pub fn as_ptr(&self) -> *const Block {
         match self.0 {
             Some(ref b) => b.as_ptr(),
-            None        => ptr::null(),
+            None => ptr::null(),
         }
     }
 
     pub fn as_mut_ptr(&mut self) -> *mut Block {
         match self.0 {
             Some(ref mut b) => b.as_mut_ptr(),
-            None            => ptr::null_mut(),
+            None => ptr::null_mut(),
         }
     }
 
@@ -93,13 +94,13 @@ impl<Block: BlockType> Inner<Block> {
         // Weirdly, `.unwrap()` is consistently faster than
         // `.unwrap_or_else(ptr::null)`, or calls to `unreachable()`.
         let ptr = self.0.as_ref().unwrap().as_ptr();
-        ptr::read(ptr.offset(index as isize))
+        ptr::read(ptr.add(index))
     }
 
     // Precondition: `index` is in bounds. This implies that `self.0.is_some()`.
     pub unsafe fn set_block(&mut self, index: usize, value: Block) {
         let ptr = self.0.as_mut().unwrap().as_mut_ptr();
-        ptr::write(ptr.offset(index as isize), value);
+        ptr::write(ptr.add(index), value);
     }
 }
 

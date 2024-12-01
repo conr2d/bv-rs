@@ -49,14 +49,14 @@ macro_rules! bit_vec {
 fn bit_vec_macro_allows_trailing_comma() {
     let bv1: super::BitVec = bit_vec![true, false, true];
     let bv2: super::BitVec = bit_vec![true, false, true,];
-    assert_eq!( bv1, bv2 );
+    assert_eq!(bv1, bv2);
 }
 
 #[test]
 fn type_1_hygiene() {
     let result = true;
     let bv: super::BitVec = bit_vec![result];
-    assert!( bv[0] );
+    assert!(bv[0]);
 }
 
 // Implements Index for any type that implements Bits.
@@ -67,7 +67,7 @@ macro_rules! impl_index_from_bits {
     )+
     )=> {
         $(
-            impl<$($param)*> ::std::ops::Index<$ix> for $bv {
+            impl<$($param)*> ::core::ops::Index<$ix> for $bv {
                 type Output = bool;
 
                 fn index(&self, index: $ix) -> &bool {
@@ -82,4 +82,3 @@ macro_rules! impl_index_from_bits {
         )+
     };
 }
-

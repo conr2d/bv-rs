@@ -1,15 +1,16 @@
-use {BlockType, Bits, BitsMut, BitsPush, BitSliceable, BitSlice, BitSliceMut};
 use super::BitVec;
-use iter::BlockIter;
-use storage::Address;
+use crate::iter::BlockIter;
+use crate::storage::Address;
+use crate::{BitSlice, BitSliceMut, BitSliceable, Bits, BitsMut, BitsPush, BlockType};
 
-use traits::get_masked_block;
+use crate::traits::get_masked_block;
 
-use range_compat::*;
+use crate::range_compat::*;
 
-use std::cmp::Ordering;
-use std::fmt;
-use std::hash::{Hash, Hasher};
+use alloc::{boxed::Box, vec::Vec};
+use core::cmp::Ordering;
+use core::fmt;
+use core::hash::{Hash, Hasher};
 
 impl<Block: BlockType> Bits for BitVec<Block> {
     type Block = Block;
@@ -19,8 +20,7 @@ impl<Block: BlockType> Bits for BitVec<Block> {
     }
 
     fn get_bit(&self, position: u64) -> bool {
-        assert!( position < self.len(),
-                 "BitVec::get_bit: out of bounds" );
+        assert!(position < self.len(), "BitVec::get_bit: out of bounds");
         let address = Address::new::<Block>(position);
         // We know this is safe because we just did a bounds check.
         let block = unsafe { self.bits.get_block(address.block_index) };
@@ -32,8 +32,10 @@ impl<Block: BlockType> Bits for BitVec<Block> {
     }
 
     fn get_raw_block(&self, position: usize) -> Block {
-        assert!( position < self.block_len(),
-                 "BitVec::get_block: out of bounds" );
+        assert!(
+            position < self.block_len(),
+            "BitVec::get_block: out of bounds"
+        );
         // We know this is safe because we just did a bounds check.
         unsafe { self.bits.get_block(position) }
     }
@@ -41,18 +43,21 @@ impl<Block: BlockType> Bits for BitVec<Block> {
 
 impl<Block: BlockType> BitsMut for BitVec<Block> {
     fn set_bit(&mut self, position: u64, value: bool) {
-        assert!( position < self.len(),
-                 "BitVec::set_bit: out of bounds" );
+        assert!(position < self.len(), "BitVec::set_bit: out of bounds");
         let address = Address::new::<Block>(position);
         // We know this is safe because we just did a bounds check.
         let old_block = unsafe { self.bits.get_block(address.block_index) };
         let new_block = old_block.with_bit(address.bit_offset, value);
-        unsafe { self.bits.set_block(address.block_index, new_block); }
+        unsafe {
+            self.bits.set_block(address.block_index, new_block);
+        }
     }
 
     fn set_block(&mut self, position: usize, value: Block) {
-        assert!( position < self.block_len(),
-                 "BitVec::set_block: out of bounds" );
+        assert!(
+            position < self.block_len(),
+            "BitVec::set_block: out of bounds"
+        );
         // We know this is safe because we just did a bounds check, and
         // position is in bounds. This may set extra bits in the last
         // block, but that's okay because such bits are never observed.
@@ -118,7 +123,6 @@ impl<'a, Block: BlockType> BitSliceable<Range<u64>> for &'a mut BitVec<Block> {
     }
 }
 
-#[cfg(inclusive_range)]
 impl<'a, Block: BlockType> BitSliceable<RangeInclusive<u64>> for &'a BitVec<Block> {
     type Slice = BitSlice<'a, Block>;
 
@@ -127,7 +131,6 @@ impl<'a, Block: BlockType> BitSliceable<RangeInclusive<u64>> for &'a BitVec<Bloc
     }
 }
 
-#[cfg(inclusive_range)]
 impl<'a, Block: BlockType> BitSliceable<RangeInclusive<u64>> for &'a mut BitVec<Block> {
     type Slice = BitSliceMut<'a, Block>;
 
@@ -168,7 +171,6 @@ impl<'a, Block: BlockType> BitSliceable<RangeTo<u64>> for &'a mut BitVec<Block> 
     }
 }
 
-#[cfg(inclusive_range)]
 impl<'a, Block: BlockType> BitSliceable<RangeToInclusive<u64>> for &'a BitVec<Block> {
     type Slice = BitSlice<'a, Block>;
 
@@ -177,7 +179,6 @@ impl<'a, Block: BlockType> BitSliceable<RangeToInclusive<u64>> for &'a BitVec<Bl
     }
 }
 
-#[cfg(inclusive_range)]
 impl<'a, Block: BlockType> BitSliceable<RangeToInclusive<u64>> for &'a mut BitVec<Block> {
     type Slice = BitSliceMut<'a, Block>;
 
@@ -212,6 +213,7 @@ impl<Other: Bits> PartialEq<Other> for BitVec<Other::Block> {
     }
 }
 
+#[allow(clippy::non_canonical_partial_ord_impl)]
 impl<Block: BlockType> PartialOrd for BitVec<Block> {
     fn partial_cmp(&self, other: &BitVec<Block>) -> Option<Ordering> {
         let iter1 = BlockIter::new(self);

@@ -1,10 +1,10 @@
-use {Bits, BitSliceable};
-use BlockType;
-use iter::BlockIter;
+use crate::iter::BlockIter;
+use crate::BlockType;
+use crate::{BitSliceable, Bits};
 
-use traits::get_masked_block;
+use crate::traits::get_masked_block;
 
-use std::cmp;
+use core::cmp;
 
 /// The result of [`BitsExt::bit_not`](../trait.BitsExt.html#method.bit_not).
 ///
@@ -14,7 +14,7 @@ use std::cmp;
 pub struct BitNot<T>(T);
 
 impl<T> BitNot<T> {
-    pub (crate) fn new(bits: T) -> Self {
+    pub(crate) fn new(bits: T) -> Self {
         BitNot(bits)
     }
 }
@@ -27,7 +27,7 @@ impl<T> BitNot<T> {
 pub struct BitAnd<T, U>(BitBinOp<T, U>);
 
 impl<T: Bits, U: Bits<Block = T::Block>> BitAnd<T, U> {
-    pub (crate) fn new(bits1: T, bits2: U) -> Self {
+    pub(crate) fn new(bits1: T, bits2: U) -> Self {
         BitAnd(BitBinOp::new(bits1, bits2))
     }
 }
@@ -40,7 +40,7 @@ impl<T: Bits, U: Bits<Block = T::Block>> BitAnd<T, U> {
 pub struct BitOr<T, U>(BitBinOp<T, U>);
 
 impl<T: Bits, U: Bits<Block = T::Block>> BitOr<T, U> {
-    pub (crate) fn new(bits1: T, bits2: U) -> Self {
+    pub(crate) fn new(bits1: T, bits2: U) -> Self {
         BitOr(BitBinOp::new(bits1, bits2))
     }
 }
@@ -53,7 +53,7 @@ impl<T: Bits, U: Bits<Block = T::Block>> BitOr<T, U> {
 pub struct BitXor<T, U>(BitBinOp<T, U>);
 
 impl<T: Bits, U: Bits<Block = T::Block>> BitXor<T, U> {
-    pub (crate) fn new(bits1: T, bits2: U) -> Self {
+    pub(crate) fn new(bits1: T, bits2: U) -> Self {
         BitXor(BitBinOp::new(bits1, bits2))
     }
 }
@@ -66,7 +66,7 @@ pub struct BitZip<T, U, F> {
 }
 
 impl<T: Bits, U: Bits<Block = T::Block>, F> BitZip<T, U, F> {
-    pub (crate) fn new(bits1: T, bits2: U, fun: F) -> Self {
+    pub(crate) fn new(bits1: T, bits2: U, fun: F) -> Self {
         BitZip {
             ops: BitBinOp::new(bits1, bits2),
             fun,
@@ -88,7 +88,7 @@ struct BitBinOp<T, U> {
 impl<T: Bits, U: Bits<Block = T::Block>> BitBinOp<T, U> {
     fn new(op1: T, op2: U) -> Self {
         let len = cmp::min(op1.bit_len(), op2.bit_len());
-        BitBinOp { op1, op2, len, }
+        BitBinOp { op1, op2, len }
     }
 
     fn bit1(&self, position: u64) -> bool {
@@ -133,8 +133,9 @@ impl_index_from_bits! {
 }
 
 impl<R, T> BitSliceable<R> for BitNot<T>
-    where T: BitSliceable<R> {
-
+where
+    T: BitSliceable<R>,
+{
     type Slice = BitNot<T::Slice>;
 
     fn bit_slice(self, range: R) -> Self::Slice {
@@ -147,9 +148,10 @@ impl_bit_sliceable_adapter! {
 }
 
 impl<T, U> PartialEq<U> for BitNot<T>
-    where T: Bits,
-          U: Bits<Block = T::Block> {
-
+where
+    T: Bits,
+    U: Bits<Block = T::Block>,
+{
     fn eq(&self, other: &U) -> bool {
         BlockIter::new(self) == BlockIter::new(other)
     }
@@ -169,13 +171,13 @@ macro_rules! impl_bits_bin_op {
 
             fn get_bit(&self, position: u64) -> bool {
                 assert!( position < self.bit_len(),
-                         format!("{}::get_bit: out of bounds", stringify!($target)) );
+                         "{}::get_bit: out of bounds", stringify!($target) );
                 self.0.bit1(position) $bool_op self.0.bit2(position)
             }
 
             fn get_block(&self, position: usize) -> Self::Block {
                 assert!( position < self.block_len(),
-                         format!("{}::get_block: out of bounds", stringify!($target)) );
+                         "{}::get_block: out of bounds", stringify!($target) );
                 get_masked_block(self, position)
             }
 
@@ -223,9 +225,11 @@ impl_bits_bin_op!(BitOr  as | ||);
 impl_bits_bin_op!(BitXor as ^ ^);
 
 impl<T, U, F> Bits for BitZip<T, U, F>
-    where T: Bits,
-          U: Bits<Block = T::Block>,
-          F: Fn(T::Block, T::Block) -> T::Block {
+where
+    T: Bits,
+    U: Bits<Block = T::Block>,
+    F: Fn(T::Block, T::Block) -> T::Block,
+{
     type Block = T::Block;
 
     fn bit_len(&self) -> u64 {
@@ -233,7 +237,10 @@ impl<T, U, F> Bits for BitZip<T, U, F>
     }
 
     fn get_block(&self, position: usize) -> Self::Block {
-        assert!( position < self.block_len(), "BitZip::get_block: out of bounds" );
+        assert!(
+            position < self.block_len(),
+            "BitZip::get_block: out of bounds"
+        );
         get_masked_block(self, position)
     }
 
@@ -249,18 +256,21 @@ impl_index_from_bits! {
 }
 
 impl<Block, R, T, U, F> BitSliceable<R> for BitZip<T, U, F>
-    where Block: BlockType,
-          R: Clone,
-          T: BitSliceable<R, Block = Block>,
-          U: BitSliceable<R, Block = Block>,
-          F: Fn(Block, Block) -> Block {
-
+where
+    Block: BlockType,
+    R: Clone,
+    T: BitSliceable<R, Block = Block>,
+    U: BitSliceable<R, Block = Block>,
+    F: Fn(Block, Block) -> Block,
+{
     type Slice = BitZip<T::Slice, U::Slice, F>;
 
     fn bit_slice(self, range: R) -> Self::Slice {
         BitZip {
-            ops: BitBinOp::new(self.ops.op1.bit_slice(range.clone()),
-                               self.ops.op2.bit_slice(range)),
+            ops: BitBinOp::new(
+                self.ops.op1.bit_slice(range.clone()),
+                self.ops.op2.bit_slice(range),
+            ),
             fun: self.fun,
         }
     }
@@ -273,13 +283,13 @@ impl_bit_sliceable_adapter! {
 }
 
 impl<T, U, F, V> PartialEq<V> for BitZip<T, U, F>
-    where T: Bits,
-          U: Bits<Block = T::Block>,
-          V: Bits<Block = T::Block>,
-          F: Fn(T::Block, T::Block) -> T::Block {
-
+where
+    T: Bits,
+    U: Bits<Block = T::Block>,
+    V: Bits<Block = T::Block>,
+    F: Fn(T::Block, T::Block) -> T::Block,
+{
     fn eq(&self, other: &V) -> bool {
         BlockIter::new(self) == BlockIter::new(other)
     }
 }
-

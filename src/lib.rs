@@ -98,6 +98,8 @@
 //! [`adapter`]: adapter/index.html
 
 #![warn(missing_docs)]
+#![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 #[cfg(feature = "serde")]
 #[macro_use]
@@ -116,8 +118,9 @@ mod storage;
 pub use self::storage::BlockType;
 
 mod traits;
-pub use self::traits::{Bits, BitsExt, BitsMut, BitsMutExt, BitsPush,
-                       BitSliceable, BitSliceableMut};
+pub use self::traits::{
+    BitSliceable, BitSliceableMut, Bits, BitsExt, BitsMut, BitsMutExt, BitsPush,
+};
 
 mod slice;
 pub use self::slice::{BitSlice, BitSliceMut};

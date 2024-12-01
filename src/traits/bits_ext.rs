@@ -1,5 +1,5 @@
 use super::Bits;
-use adapter::*;
+use crate::adapter::*;
 
 /// Extension trait for adapter operations on bit slices.
 ///
@@ -32,12 +32,12 @@ use adapter::*;
 /// assert_eq!( bv3, bit_vec![false, false, false, true] );
 /// ```
 pub trait BitsExt: Bits {
-
     /// Concatenates two bit vectors, with the bits of `self` followed by the bits
     /// of `other`.
     fn bit_concat<Other>(&self, other: Other) -> BitConcat<&Self, Other>
-        where Other: Bits<Block = Self::Block> {
-
+    where
+        Other: Bits<Block = Self::Block>,
+    {
         BitConcat::new(self, other)
     }
 
@@ -46,9 +46,10 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_concat<Other>(self, other: Other) -> BitConcat<Self, Other>
-        where Self: Sized,
-              Other: Bits<Block = Self::Block> {
-
+    where
+        Self: Sized,
+        Other: Bits<Block = Self::Block>,
+    {
         BitConcat::new(self, other)
     }
 
@@ -65,10 +66,11 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_pad(self, len: u64) -> BitConcat<Self, BitFill<Self::Block>>
-        where Self: Sized {
-
+    where
+        Self: Sized,
+    {
         let have = self.bit_len();
-        let need = if len > have {len - have} else {0};
+        let need = if len > have { len - have } else { 0 };
         self.into_bit_concat(BitFill::zeroes(need))
     }
 
@@ -81,7 +83,8 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_not(self) -> BitNot<Self>
-        where Self: Sized
+    where
+        Self: Sized,
     {
         BitNot::new(self)
     }
@@ -92,8 +95,9 @@ pub trait BitsExt: Bits {
     /// If the lengths of the operands differ, the result will have
     /// the minimum of the two.
     fn bit_and<Other>(&self, other: Other) -> BitAnd<&Self, Other>
-        where Other: Bits<Block = Self::Block> {
-
+    where
+        Other: Bits<Block = Self::Block>,
+    {
         BitAnd::new(self, other)
     }
 
@@ -105,8 +109,10 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_and<Other>(self, other: Other) -> BitAnd<Self, Other>
-        where Self: Sized,
-              Other: Bits<Block = Self::Block> {
+    where
+        Self: Sized,
+        Other: Bits<Block = Self::Block>,
+    {
         BitAnd::new(self, other)
     }
 
@@ -116,8 +122,9 @@ pub trait BitsExt: Bits {
     /// If the lengths of the operands differ, the result will have
     /// the minimum of the two.
     fn bit_or<Other>(&self, other: Other) -> BitOr<&Self, Other>
-        where Other: Bits<Block = Self::Block> {
-
+    where
+        Other: Bits<Block = Self::Block>,
+    {
         BitOr::new(self, other)
     }
 
@@ -129,9 +136,10 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_or<Other>(self, other: Other) -> BitOr<Self, Other>
-        where Self: Sized,
-              Other: Bits<Block = Self::Block> {
-
+    where
+        Self: Sized,
+        Other: Bits<Block = Self::Block>,
+    {
         BitOr::new(self, other)
     }
 
@@ -141,8 +149,9 @@ pub trait BitsExt: Bits {
     /// If the lengths of the operands differ, the result will have
     /// the minimum of the two.
     fn bit_xor<Other>(&self, other: Other) -> BitXor<&Self, Other>
-        where Other: Bits<Block = Self::Block> {
-
+    where
+        Other: Bits<Block = Self::Block>,
+    {
         BitXor::new(self, other)
     }
 
@@ -154,9 +163,10 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_xor<Other>(self, other: Other) -> BitXor<Self, Other>
-        where Self: Sized,
-              Other: Bits<Block = Self::Block> {
-
+    where
+        Self: Sized,
+        Other: Bits<Block = Self::Block>,
+    {
         BitXor::new(self, other)
     }
 
@@ -170,9 +180,10 @@ pub trait BitsExt: Bits {
     /// If the lengths of the operands differ, the result will have
     /// the minimum of the two.
     fn bit_zip<Other, F>(&self, other: Other, fun: F) -> BitZip<&Self, Other, F>
-        where Other: Bits<Block = Self::Block>,
-              F: Fn(Self::Block, Self::Block, usize) -> Self::Block {
-
+    where
+        Other: Bits<Block = Self::Block>,
+        F: Fn(Self::Block, Self::Block, usize) -> Self::Block,
+    {
         BitZip::new(self, other, fun)
     }
 
@@ -188,13 +199,13 @@ pub trait BitsExt: Bits {
     ///
     /// Consumes `self`.
     fn into_bit_zip<Other, F>(self, other: Other, fun: F) -> BitZip<Self, Other, F>
-        where Self: Sized,
-              Other: Bits<Block = Self::Block>,
-              F: Fn(Self::Block, Self::Block, usize) -> Self::Block {
-
+    where
+        Self: Sized,
+        Other: Bits<Block = Self::Block>,
+        F: Fn(Self::Block, Self::Block, usize) -> Self::Block,
+    {
         BitZip::new(self, other, fun)
     }
 }
 
 impl<T: Bits> BitsExt for T {}
-

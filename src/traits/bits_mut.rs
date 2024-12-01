@@ -1,5 +1,6 @@
 use super::Bits;
-use storage::{BlockType, Address};
+use crate::storage::{Address, BlockType};
+use alloc::{boxed::Box, vec::Vec};
 
 /// Mutable bit vector operations that don’t affect the length.
 ///
@@ -40,9 +41,9 @@ pub trait BitsMut: Bits {
     /// Panics if `position` is out of bounds.
     fn set_block(&mut self, position: usize, mut value: Self::Block) {
         let offset = Self::Block::mul_nbits(position);
-        let count  = Self::Block::block_bits(self.bit_len(), position);
+        let count = Self::Block::block_bits(self.bit_len(), position);
 
-        for i in 0 .. count as u64 {
+        for i in 0..count as u64 {
             let bit = value & Self::Block::one() != Self::Block::zero();
             self.set_bit(offset + i, bit);
             value = value >> 1;
@@ -76,8 +77,7 @@ pub trait BitsMut: Bits {
 
         let high_bits = value >> margin;
 
-        let new_block1 = old_block1.with_bits(address.bit_offset,
-                                              margin, value);
+        let new_block1 = old_block1.with_bits(address.bit_offset, margin, value);
         let new_block2 = old_block2.with_bits(0, extra, high_bits);
         self.set_block(address.block_index, new_block1);
         self.set_block(address.block_index + 1, new_block2);
@@ -136,8 +136,7 @@ impl<Block: BlockType> BitsMut for Vec<Block> {
 
 impl BitsMut for [bool] {
     fn set_bit(&mut self, position: u64, value: bool) {
-        let position = position.to_usize()
-            .expect("Vec<bool>::set_bit: overflow");
+        let position = position.to_usize().expect("Vec<bool>::set_bit: overflow");
         self[position] = value;
     }
 }
@@ -148,4 +147,3 @@ impl BitsMut for Vec<bool> {
         self.as_mut_slice().set_bit(position, value)
     }
 }
-
