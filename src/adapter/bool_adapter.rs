@@ -1,9 +1,10 @@
-use {Bits, BitsMut, BitsPush};
-use BlockType;
-use iter::BlockIter;
+use crate::iter::BlockIter;
+use crate::BlockType;
+use crate::{Bits, BitsMut, BitsPush};
 
-use std::marker::PhantomData;
-use std::ops;
+use alloc::vec::Vec;
+use core::marker::PhantomData;
+use core::ops;
 
 /// Adapts a sequence of `bool`s (*e.g.,* `&[bool]`) to emulate a bit
 /// vector.
@@ -24,7 +25,7 @@ use std::ops;
 /// [`BitsPush`]: ../trait.BitsPush.html
 #[derive(Debug, Clone)]
 pub struct BoolAdapter<Block, T> {
-    bits:    T,
+    bits: T,
     _marker: PhantomData<Block>,
 }
 
@@ -36,8 +37,8 @@ impl<Block: BlockType, T> BoolAdapter<Block, T> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitSliceable;
-    /// use bv::adapter::BoolAdapter;
+    /// use nostd_bv::BitSliceable;
+    /// use nostd_bv::adapter::BoolAdapter;
     ///
     /// let array = [0b101usize];
     /// let bv1 = BoolAdapter::new(vec![true, false, true]);
@@ -140,12 +141,12 @@ impl_for_bool_adapter! {
 }
 
 impl<Block, T, U> PartialEq<U> for BoolAdapter<Block, T>
-    where Block: BlockType,
-          U: Bits<Block = Block>,
-          Self: Bits<Block = Block> {
-
+where
+    Block: BlockType,
+    U: Bits<Block = Block>,
+    Self: Bits<Block = Block>,
+{
     fn eq(&self, other: &U) -> bool {
         BlockIter::new(self) == BlockIter::new(other)
     }
 }
-

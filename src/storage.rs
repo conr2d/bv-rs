@@ -1,19 +1,20 @@
-use std::mem;
-use std::ops;
+use core::mem;
+use core::ops;
 
 /// Interface to primitive bit storage.
 ///
 /// Types implementing this trait can be used as the blocks of a bit-vector.
-pub trait BlockType: Copy +
-                     PartialEq +
-                     Ord +
-                     ops::BitAnd<Output = Self> +
-                     ops::BitOr<Output = Self> +
-                     ops::BitXor<Output = Self> +
-                     ops::Not<Output = Self> +
-                     ops::Shl<usize, Output = Self> +
-                     ops::Shr<usize, Output = Self> +
-                     ops::Sub<Output = Self>
+pub trait BlockType:
+    Copy
+    + PartialEq
+    + Ord
+    + ops::BitAnd<Output = Self>
+    + ops::BitOr<Output = Self>
+    + ops::BitXor<Output = Self>
+    + ops::Not<Output = Self>
+    + ops::Shl<usize, Output = Self>
+    + ops::Shr<usize, Output = Self>
+    + ops::Sub<Output = Self>
 {
     /// The number of bits in a block.
     #[inline]
@@ -98,13 +99,12 @@ pub trait BlockType: Copy +
         let block_start = Self::mul_nbits(position);
         let block_limit = block_start + Self::nbits() as u64;
 
-        debug_assert!( block_start <= len,
-                       "BlockType::block_bits: precondition" );
+        debug_assert!(block_start <= len, "BlockType::block_bits: precondition");
 
         usize::if_then_else(
             block_limit <= len,
             Self::nbits(),
-            len.wrapping_sub(block_start) as usize
+            len.wrapping_sub(block_start) as usize,
         )
     }
 
@@ -187,8 +187,10 @@ pub trait BlockType: Copy +
     /// Panics of the bit span is out of bounds.
     #[inline]
     fn get_bits(self, start: usize, len: usize) -> Self {
-        assert!(start + len <= Self::nbits(),
-                "Block::get_bits: out of bounds");
+        assert!(
+            start + len <= Self::nbits(),
+            "Block::get_bits: out of bounds"
+        );
 
         (self >> start) & Self::low_mask(len)
     }
@@ -200,8 +202,10 @@ pub trait BlockType: Copy +
     /// Panics of the bit span is out of bounds.
     #[inline]
     fn with_bits(self, start: usize, len: usize, value: Self) -> Self {
-        assert!(start + len <= Self::nbits(),
-                "Block::with_bits: out of bounds");
+        assert!(
+            start + len <= Self::nbits(),
+            "Block::with_bits: out of bounds"
+        );
 
         let mask = Self::low_mask(len) << start;
         let shifted_value = value << start;
@@ -214,7 +218,7 @@ pub trait BlockType: Copy +
     fn ceil_lg(self) -> usize {
         usize::if_then(
             self > Self::one(),
-            Self::nbits().wrapping_sub((self.wrapping_sub(Self::one())).leading_zeros() as usize)
+            Self::nbits().wrapping_sub((self.wrapping_sub(Self::one())).leading_zeros()),
         )
     }
 
@@ -223,7 +227,9 @@ pub trait BlockType: Copy +
     fn floor_lg(self) -> usize {
         usize::if_then(
             self > Self::one(),
-            Self::nbits().wrapping_sub(1).wrapping_sub(self.leading_zeros() as usize)
+            Self::nbits()
+                .wrapping_sub(1)
+                .wrapping_sub(self.leading_zeros()),
         )
     }
 
@@ -252,9 +258,7 @@ trait IfThenElse {
 }
 
 macro_rules! impl_block_type {
-    ( $ty:ident )
-        =>
-    {
+    ( $ty:ident ) => {
         impl IfThenElse for $ty {
             #[inline]
             fn if_then_else(cond: bool, then_val: Self, else_val: Self) -> Self {
@@ -320,14 +324,13 @@ macro_rules! impl_block_type {
                 1
             }
         }
-    }
+    };
 }
 
 impl_block_type!(u8);
 impl_block_type!(u16);
 impl_block_type!(u32);
 impl_block_type!(u64);
-#[cfg(int_128)]
 impl_block_type!(u128);
 impl_block_type!(usize);
 
@@ -352,19 +355,18 @@ impl Address {
     #[inline]
     pub fn new<Block: BlockType>(bit_index: u64) -> Self {
         Address {
-            block_index: Block::checked_div_nbits(bit_index)
-                .expect("Address::new: index overflow"),
+            block_index: Block::checked_div_nbits(bit_index).expect("Address::new: index overflow"),
             bit_offset: Block::mod_nbits(bit_index),
         }
     }
 
-//    /// Converts an `Address` back into a raw bit index.
-//    ///
-//    /// This method and `new` should be inverses.
-//    #[inline]
-//    pub fn bit_index<Block: BlockType>(&self) -> u64 {
-//        Block::mul_nbits(self.block_index) + self.bit_offset as u64
-//    }
+    //    /// Converts an `Address` back into a raw bit index.
+    //    ///
+    //    /// This method and `new` should be inverses.
+    //    #[inline]
+    //    pub fn bit_index<Block: BlockType>(&self) -> u64 {
+    //        Block::mul_nbits(self.block_index) + self.bit_offset as u64
+    //    }
 }
 
 #[cfg(test)]
@@ -380,7 +382,7 @@ mod test {
         assert_eq!(64, u64::nbits());
     }
 
-    quickcheck!{
+    quickcheck! {
         fn prop_div_nbits(n: u32) -> bool {
             u32::div_nbits(n as u64) == (n / 32) as usize
         }
@@ -407,10 +409,10 @@ mod test {
 
     #[test]
     fn lg_nbits() {
-        assert_eq!( u8::lg_nbits(), 3 );
-        assert_eq!( u16::lg_nbits(), 4 );
-        assert_eq!( u32::lg_nbits(), 5 );
-        assert_eq!( u64::lg_nbits(), 6 );
+        assert_eq!(u8::lg_nbits(), 3);
+        assert_eq!(u16::lg_nbits(), 4);
+        assert_eq!(u32::lg_nbits(), 5);
+        assert_eq!(u64::lg_nbits(), 6);
     }
 
     #[test]
@@ -434,44 +436,49 @@ mod test {
 
     #[test]
     fn get_bits() {
-        assert_eq!(0b0,
-                   0b0100110001110000u16.get_bits(0, 0));
-        assert_eq!(0b010,
-                   0b0100110001110000u16.get_bits(13, 3));
-        assert_eq!(    0b110001,
-                       0b0100110001110000u16.get_bits(6, 6));
-        assert_eq!(           0b10000,
-                              0b0100110001110000u16.get_bits(0, 5));
-        assert_eq!(0b0100110001110000,
-                   0b0100110001110000u16.get_bits(0, 16));
+        assert_eq!(0b0, 0b0100110001110000u16.get_bits(0, 0));
+        assert_eq!(0b010, 0b0100110001110000u16.get_bits(13, 3));
+        assert_eq!(0b110001, 0b0100110001110000u16.get_bits(6, 6));
+        assert_eq!(0b10000, 0b0100110001110000u16.get_bits(0, 5));
+        assert_eq!(0b0100110001110000, 0b0100110001110000u16.get_bits(0, 16));
     }
 
     #[test]
     fn with_bits() {
-        assert_eq!(0b0111111111000001,
-                   0b0110001111000001u16.with_bits(10, 3, 0b111));
-        assert_eq!(0b0101110111000001,
-                   0b0110001111000001u16.with_bits(9, 5, 0b01110));
-        assert_eq!(0b0110001111000001,
-                   0b0110001111000001u16.with_bits(14, 0, 0b01110));
-        assert_eq!(0b0110001110101010,
-                   0b0110001111000001u16.with_bits(0, 8, 0b10101010));
-        assert_eq!(0b0000000000000010,
-                   0b0110001111000001u16.with_bits(0, 16, 0b10));
+        assert_eq!(
+            0b0111111111000001,
+            0b0110001111000001u16.with_bits(10, 3, 0b111)
+        );
+        assert_eq!(
+            0b0101110111000001,
+            0b0110001111000001u16.with_bits(9, 5, 0b01110)
+        );
+        assert_eq!(
+            0b0110001111000001,
+            0b0110001111000001u16.with_bits(14, 0, 0b01110)
+        );
+        assert_eq!(
+            0b0110001110101010,
+            0b0110001111000001u16.with_bits(0, 8, 0b10101010)
+        );
+        assert_eq!(
+            0b0000000000000010,
+            0b0110001111000001u16.with_bits(0, 16, 0b10)
+        );
     }
 
     #[test]
     fn get_bit() {
-        assert!(! 0b00000000u8.get_bit(0));
-        assert!(! 0b00000000u8.get_bit(1));
-        assert!(! 0b00000000u8.get_bit(2));
-        assert!(! 0b00000000u8.get_bit(3));
-        assert!(! 0b00000000u8.get_bit(7));
-        assert!(! 0b10101010u8.get_bit(0));
-        assert!(  0b10101010u8.get_bit(1));
-        assert!(! 0b10101010u8.get_bit(2));
-        assert!(  0b10101010u8.get_bit(3));
-        assert!(  0b10101010u8.get_bit(7));
+        assert!(!0b00000000u8.get_bit(0));
+        assert!(!0b00000000u8.get_bit(1));
+        assert!(!0b00000000u8.get_bit(2));
+        assert!(!0b00000000u8.get_bit(3));
+        assert!(!0b00000000u8.get_bit(7));
+        assert!(!0b10101010u8.get_bit(0));
+        assert!(0b10101010u8.get_bit(1));
+        assert!(!0b10101010u8.get_bit(2));
+        assert!(0b10101010u8.get_bit(3));
+        assert!(0b10101010u8.get_bit(7));
     }
 
     #[test]
@@ -495,11 +502,13 @@ mod test {
         assert_eq!(3, 8u32.floor_lg());
 
         fn prop(n: u64) -> TestResult {
-            if n == 0 { return TestResult::discard(); }
+            if n == 0 {
+                return TestResult::discard();
+            }
 
             TestResult::from_bool(
-                2u64.pow(n.floor_lg() as u32) <= n
-                    && 2u64.pow(n.floor_lg() as u32 + 1) > n)
+                2u64.pow(n.floor_lg() as u32) <= n && 2u64.pow(n.floor_lg() as u32 + 1) > n,
+            )
         }
 
         quickcheck(prop as fn(u64) -> TestResult);
@@ -517,29 +526,31 @@ mod test {
         assert_eq!(4, 9u32.ceil_lg());
 
         fn prop(n: u64) -> TestResult {
-            if n <= 1 { return TestResult::discard(); }
+            if n <= 1 {
+                return TestResult::discard();
+            }
 
             TestResult::from_bool(
-                2u64.pow(n.ceil_lg() as u32) >= n
-                    && 2u64.pow(n.ceil_lg() as u32 - 1) < n)
+                2u64.pow(n.ceil_lg() as u32) >= n && 2u64.pow(n.ceil_lg() as u32 - 1) < n,
+            )
         }
         quickcheck(prop as fn(u64) -> TestResult);
     }
 
     #[test]
     fn block_bits() {
-        assert_eq!( u16::block_bits(1, 0), 1 );
-        assert_eq!( u16::block_bits(2, 0), 2 );
-        assert_eq!( u16::block_bits(16, 0), 16 );
-        assert_eq!( u16::block_bits(16, 1), 0 ); // boundary condition
-        assert_eq!( u16::block_bits(23, 0), 16 );
-        assert_eq!( u16::block_bits(23, 1), 7 );
-        assert_eq!( u16::block_bits(35, 0), 16 );
-        assert_eq!( u16::block_bits(35, 1), 16 );
-        assert_eq!( u16::block_bits(35, 2), 3 );
-        assert_eq!( u16::block_bits(48, 0), 16 );
-        assert_eq!( u16::block_bits(48, 1), 16 );
-        assert_eq!( u16::block_bits(48, 2), 16 );
-        assert_eq!( u16::block_bits(48, 3), 0 ); // boundary condition
+        assert_eq!(u16::block_bits(1, 0), 1);
+        assert_eq!(u16::block_bits(2, 0), 2);
+        assert_eq!(u16::block_bits(16, 0), 16);
+        assert_eq!(u16::block_bits(16, 1), 0); // boundary condition
+        assert_eq!(u16::block_bits(23, 0), 16);
+        assert_eq!(u16::block_bits(23, 1), 7);
+        assert_eq!(u16::block_bits(35, 0), 16);
+        assert_eq!(u16::block_bits(35, 1), 16);
+        assert_eq!(u16::block_bits(35, 2), 3);
+        assert_eq!(u16::block_bits(48, 0), 16);
+        assert_eq!(u16::block_bits(48, 1), 16);
+        assert_eq!(u16::block_bits(48, 2), 16);
+        assert_eq!(u16::block_bits(48, 3), 0); // boundary condition
     }
 }

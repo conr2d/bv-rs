@@ -1,15 +1,17 @@
 #![feature(test)]
 
-extern crate bv;
+extern crate nostd_bv;
 extern crate test;
 
-use bv::{Bits, BitsMut, BitVec, BitSliceable};
+use nostd_bv::{BitSliceable, BitVec, Bits, BitsMut};
 use test::Bencher;
 
 const NBITS: u64 = 640;
 
 #[inline(never)]
-fn mystery_bit() -> bool { false }
+fn mystery_bit() -> bool {
+    false
+}
 
 #[bench]
 fn bit_vec_read_bits(b: &mut Bencher) {
@@ -18,7 +20,7 @@ fn bit_vec_read_bits(b: &mut Bencher) {
     b.iter(|| {
         let mut result = false;
 
-        for i in 0 .. bv.len() {
+        for i in 0..bv.len() {
             result ^= bv[i];
         }
 
@@ -31,7 +33,7 @@ fn bit_vec_read_bits_write(b: &mut Bencher) {
     let mut bv: BitVec = BitVec::new_fill(true, NBITS);
 
     b.iter(|| {
-        for i in 0 .. bv.len() {
+        for i in 0..bv.len() {
             let bit = bv[i] ^ mystery_bit();
             bv.set_bit(i, bit);
         }
@@ -46,8 +48,8 @@ fn slice_read_bits(b: &mut Bencher) {
     b.iter(|| {
         let mut result = false;
 
-        for i in 0 .. slice.bit_len() {
-            result ^= slice.get_bit(i as u64);
+        for i in 0..slice.bit_len() {
+            result ^= slice.get_bit(i);
         }
 
         result
@@ -60,7 +62,7 @@ fn slice_read_bits_write(b: &mut Bencher) {
     let slice = v.as_mut_slice();
 
     b.iter(|| {
-        for i in 0 .. slice.bit_len() {
+        for i in 0..slice.bit_len() {
             let bit = slice.get_bit(i) ^ mystery_bit();
             slice.set_bit(i, bit);
         }
@@ -75,8 +77,8 @@ fn bit_slice_read_bits(b: &mut Bencher) {
     b.iter(|| {
         let mut result = false;
 
-        for i in 0 .. slice.bit_len() {
-            result ^= slice.get_bit(i as u64);
+        for i in 0..slice.bit_len() {
+            result ^= slice.get_bit(i);
         }
 
         result
@@ -89,10 +91,9 @@ fn bit_slice_read_bits_write(b: &mut Bencher) {
     let mut slice = (&mut *v).bit_slice(..);
 
     b.iter(|| {
-        for i in 0 .. slice.bit_len() {
+        for i in 0..slice.bit_len() {
             let bit = slice.get_bit(i) ^ mystery_bit();
             slice.set_bit(i, bit);
         }
     });
 }
-

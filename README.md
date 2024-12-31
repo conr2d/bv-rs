@@ -1,9 +1,8 @@
-# bv-rs: bit-vectors and bit-slices for Rust
+# nostd-bv: bit-vectors and bit-slices for Rust
 
-[![Build Status](https://travis-ci.org/tov/bv-rs.svg?branch=master)](https://travis-ci.org/tov/bv-rs)
-[![Crates.io](https://img.shields.io/crates/v/bv.svg?maxAge=2592000)](https://crates.io/crates/bv)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE-MIT)
-[![License: Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE-APACHE)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nostd-rs/bv/ci.yml?event=push)](https://github.com/nostd-rs/bv)
+[![Crates.io Version](https://img.shields.io/crates/v/nostd-bv)](https://crates.io/crates/nostd-bv)
+[![GitHub License](https://img.shields.io/badge/license-MIT%2FApache2-blue)](#LICENSE)
 
 The main type exported by the library, `BitVec`, is a packed, growable
 bit-vector. Its API mirrors that of `Vec` where reasonable. The library
@@ -16,19 +15,20 @@ as unpacked vectors and slices of `bool`.
 
 ## Usage
 
-It’s [on crates.io](https://crates.io/crates/bv), so you can add
+It’s [on crates.io](https://crates.io/crates/nostd-bv), so you can add
 
 ```toml
 [dependencies]
-bv = "0.11.1"
+nostd-bv = "0.11"
 ```
 
-to your `Cargo.toml` and
+to your `Cargo.toml`.
 
-```rust
-extern crate bv;
-```
+## License
 
-to your crate root.
+Licensed under either of:
 
-This crate supports Rust version 1.31 and newer.
+* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
+* MIT license ([LICENSE-MIT](LICENSE-MIT) or https://opensource.org/licenses/MIT)
+
+at your option.

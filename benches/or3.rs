@@ -1,13 +1,14 @@
 #![feature(test)]
+#![allow(clippy::ptr_arg)]
 
-extern crate bv;
+extern crate nostd_bv;
 extern crate test;
 
-use bv::BitVec;
-use bv::{Bits, BitsExt, BitsMut, BitsMutExt, BitsPush, BitSliceable};
+use nostd_bv::BitVec;
+use nostd_bv::{BitSliceable, Bits, BitsExt, BitsMut, BitsMutExt, BitsPush};
 
+use core::cmp;
 use test::Bencher;
-use std::cmp;
 
 const NBITS: usize = 9600;
 
@@ -41,7 +42,7 @@ type Array<Block> = &'static [Block];
 impl Subject for Array<u32> {
     #[inline(never)]
     fn new() -> Self {
-        return &[0; NBITS / 32];
+        &[0; NBITS / 32]
     }
 }
 

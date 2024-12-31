@@ -1,5 +1,5 @@
-use BlockType;
 use super::{Bits, BitsMut};
+use crate::BlockType;
 
 /// Extension trait for mutable operations on bit slices.
 pub trait BitsMutExt: BitsMut {
@@ -9,14 +9,17 @@ pub trait BitsMutExt: BitsMut {
     ///
     /// If `self.bit_len() != other.bit_len()`.
     fn bit_assign<T: Bits<Block = Self::Block>>(&mut self, other: T) {
-        assert_eq!( self.bit_len(), other.bit_len(),
-                    "BitsMutExt::bit_assign: arguments have different lengths" );
+        assert_eq!(
+            self.bit_len(),
+            other.bit_len(),
+            "BitsMutExt::bit_assign: arguments have different lengths"
+        );
 
-        let bit_len     = self.bit_len();
+        let bit_len = self.bit_len();
         let full_blocks = Self::Block::div_nbits(bit_len);
-        let extra_bits  = Self::Block::mod_nbits(bit_len);
+        let extra_bits = Self::Block::mod_nbits(bit_len);
 
-        for i in 0 .. full_blocks {
+        for i in 0..full_blocks {
             let block = other.get_raw_block(i);
             self.set_block(i, block);
         }
@@ -64,17 +67,21 @@ pub trait BitsMutExt: BitsMut {
     ///
     /// If `self.bit_len() != other.bit_len()`.
     fn bit_zip_assign<T, F>(&mut self, other: T, mut fun: F)
-        where T: Bits<Block = Self::Block>,
-              F: FnMut(Self::Block, Self::Block) -> Self::Block {
+    where
+        T: Bits<Block = Self::Block>,
+        F: FnMut(Self::Block, Self::Block) -> Self::Block,
+    {
+        assert_eq!(
+            self.bit_len(),
+            other.bit_len(),
+            "BitsMutExt::bit_zip_assign: arguments have different lengths"
+        );
 
-        assert_eq!( self.bit_len(), other.bit_len(),
-                    "BitsMutExt::bit_zip_assign: arguments have different lengths" );
-
-        let bit_len     = self.bit_len();
+        let bit_len = self.bit_len();
         let full_blocks = Self::Block::div_nbits(bit_len);
-        let extra_bits  = Self::Block::mod_nbits(bit_len);
+        let extra_bits = Self::Block::mod_nbits(bit_len);
 
-        for i in 0 .. full_blocks {
+        for i in 0..full_blocks {
             let self_block = self.get_raw_block(i);
             let other_block = other.get_raw_block(i);
             let combined_block = fun(self_block, other_block);
@@ -94,34 +101,34 @@ impl<T: BitsMut> BitsMutExt for T {}
 
 #[cfg(test)]
 mod test {
-    use {BitVec, BitSliceable, BitSliceableMut};
     use super::*;
+    use crate::{BitSliceable, BitSliceableMut, BitVec};
+    use alloc::vec;
 
     #[test]
     fn bit_and_assign() {
         let mut bv1: BitVec = bit_vec![false, false, true, true];
-        let     bv2: BitVec = bit_vec![false, true, true, false];
+        let bv2: BitVec = bit_vec![false, true, true, false];
 
         bv1.bit_and_assign(&bv2);
-        assert_eq!( bv1, bit_vec![false, false, true, false] );
+        assert_eq!(bv1, bit_vec![false, false, true, false]);
     }
 
     #[test]
     #[should_panic]
     fn bit_and_assign_bad_sizes() {
         let mut bv1: BitVec = bit_vec![false, false, true, true, true];
-        let     bv2: BitVec = bit_vec![false, true, true, false];
+        let bv2: BitVec = bit_vec![false, true, true, false];
 
         bv1.bit_and_assign(&bv2);
     }
 
     #[test]
     fn bit_xor_assign_slice() {
-        let mut v1 = vec![0b00_0011_11u8];
-        let     v2 = [0b0_1010_101u8];
+        let mut v1 = vec![0b0000_1111_u8];
+        let v2 = [0b0101_0101_u8];
 
-        v1.bit_slice_mut(2..6)
-            .bit_xor_assign(v2.bit_slice(3..7));
+        v1.bit_slice_mut(2..6).bit_xor_assign(v2.bit_slice(3..7));
 
         assert_eq!(v1, vec![0b00100111])
     }

@@ -1,7 +1,7 @@
 //! This module impls the `Bits`, `BitsMut` and `BitSliceable` traits
 //! for fixed-sized arrays of `BlockType`s.
 
-use {BlockType, Bits, BitsMut, BitSliceable};
+use crate::{BitSliceable, Bits, BitsMut, BlockType};
 
 macro_rules! impl_traits_for_array {
     (
@@ -79,4 +79,3 @@ impl_traits_for_array! {
     32 64 128 256 512 1024 2048 4096
     8_192 16_384 32_768 65_536 131_072 262_144 524_288 1_048_576
 }
-
