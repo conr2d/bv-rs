@@ -11,8 +11,8 @@
 /// # Examples
 ///
 /// ```
-/// # #[macro_use] extern crate bv;
-/// use bv::*;
+/// # #[macro_use] extern crate nostd_bv;
+/// use nostd_bv::*;
 ///
 /// fn main() {
 ///     let mut bv1: BitVec = bit_vec![ true; 3 ];

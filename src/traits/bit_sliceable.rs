@@ -18,7 +18,7 @@ pub trait BitSliceable<Range>: Bits {
     /// # Examples
     ///
     /// ```
-    /// use bv::{BitSlice, BitSliceable};
+    /// use nostd_bv::{BitSlice, BitSliceable};
     ///
     /// let array = [0b01010011u16];
     /// let slice = BitSlice::from_slice(&array);

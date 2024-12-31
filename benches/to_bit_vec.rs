@@ -1,9 +1,9 @@
 #![feature(test)]
 
-extern crate bv;
+extern crate nostd_bv;
 extern crate test;
 
-use bv::*;
+use nostd_bv::*;
 use test::Bencher;
 
 const NBLOCKS: usize = 300;

@@ -1,9 +1,9 @@
 #![feature(test)]
 
-extern crate bv;
+extern crate nostd_bv;
 extern crate test;
 
-use bv::{BitSliceable, BitVec, Bits, BitsMut};
+use nostd_bv::{BitSliceable, BitVec, Bits, BitsMut};
 use test::Bencher;
 
 const NBITS: u64 = 640;

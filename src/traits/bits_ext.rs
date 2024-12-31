@@ -16,7 +16,7 @@ use crate::adapter::*;
 /// # Examples
 ///
 /// ```
-/// use bv::*;
+/// use nostd_bv::*;
 ///
 /// let bv1: BitVec = bit_vec![false, false, true, true];
 /// let bv2: BitVec = bit_vec![false, true, false, true];

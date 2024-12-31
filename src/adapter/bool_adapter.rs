@@ -37,8 +37,8 @@ impl<Block: BlockType, T> BoolAdapter<Block, T> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitSliceable;
-    /// use bv::adapter::BoolAdapter;
+    /// use nostd_bv::BitSliceable;
+    /// use nostd_bv::adapter::BoolAdapter;
     ///
     /// let array = [0b101usize];
     /// let bv1 = BoolAdapter::new(vec![true, false, true]);

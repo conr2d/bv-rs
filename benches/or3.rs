@@ -1,11 +1,11 @@
 #![feature(test)]
 #![allow(clippy::ptr_arg)]
 
-extern crate bv;
+extern crate nostd_bv;
 extern crate test;
 
-use bv::BitVec;
-use bv::{BitSliceable, Bits, BitsExt, BitsMut, BitsMutExt, BitsPush};
+use nostd_bv::BitVec;
+use nostd_bv::{BitSliceable, Bits, BitsExt, BitsMut, BitsMutExt, BitsPush};
 
 use core::cmp;
 use test::Bencher;

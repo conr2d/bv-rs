@@ -26,12 +26,12 @@ mod test;
 ///   - [`Bits::get_bit`](trait.Bits.html#method.get_bit) and
 ///   - [`BitsMut::set_bit`](trait.BitsMut.html#method.set_bit).
 ///
-/// You will likely want to `use` these traits (or `bv::*`) when you use `BitVec`.
+/// You will likely want to `use` these traits (or `nostd_bv::*`) when you use `BitVec`.
 ///
 /// # Examples
 ///
 /// ```
-/// use bv::BitVec;
+/// use nostd_bv::BitVec;
 ///
 /// let mut bv: BitVec = BitVec::new();
 /// assert_eq!(bv.len(), 0);
@@ -93,7 +93,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitVec;
+    /// use nostd_bv::BitVec;
     ///
     /// let mut bv: BitVec = BitVec::new();
     /// assert_eq!(bv.len(), 0);
@@ -116,7 +116,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitVec;
+    /// use nostd_bv::BitVec;
     ///
     /// let mut bv: BitVec<u16> = BitVec::with_capacity(20);
     /// assert_eq!(bv.capacity(), 32);
@@ -130,7 +130,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitVec;
+    /// use nostd_bv::BitVec;
     ///
     /// let mut bv: BitVec<u16> = BitVec::with_block_capacity(8);
     /// assert_eq!(bv.capacity(), 128);
@@ -147,7 +147,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u64> = BitVec::new_fill(false, 100);
     ///
@@ -213,7 +213,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitVec;
+    /// use nostd_bv::BitVec;
     ///
     /// let mut bv: BitVec = BitVec::new();
     /// assert_eq!(bv.len(), 0);
@@ -234,7 +234,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u64> = BitVec::new_fill(false, 100);
     ///
@@ -252,7 +252,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let bv: BitVec<u64> = bit_vec![false; 100];
     ///
@@ -271,7 +271,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let bv: BitVec<u64> = BitVec::with_capacity(250);
     ///
@@ -294,7 +294,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u32> = bit_vec![ false, false, true ];
     /// assert_eq!( bv.capacity(), 32 );
@@ -316,7 +316,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u32> = bit_vec![ false, false, true ];
     /// assert_eq!( bv.block_capacity(), 1 );
@@ -336,7 +336,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u32> = bit_vec![ false, false, true ];
     /// assert_eq!( bv.capacity(), 32 );
@@ -355,7 +355,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u32> = bit_vec![ false, false, true ];
     /// assert_eq!( bv.block_capacity(), 1 );
@@ -374,7 +374,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::BitVec;
+    /// use nostd_bv::BitVec;
     ///
     /// let mut bv: BitVec<u8> = BitVec::new();
     ///
@@ -401,7 +401,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let bv: BitVec<u8> = bit_vec![true, true, false, false, true, false, true, false];
     /// let bs = bv.into_boxed_slice();
@@ -422,7 +422,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut v1: BitVec = bit_vec![ true, true, false, false ];
     /// let     v2: BitVec = bit_vec![ true, true ];
@@ -444,7 +444,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let     v1: BitVec = bit_vec![ true, true, false, false ];
     /// let mut v2: BitVec = bit_vec![ true, true ];
@@ -483,7 +483,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let bv: BitVec = bit_vec![true, false, true];
     /// let slice = bv.as_slice();
@@ -506,7 +506,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec = bit_vec![true, false, true];
     ///
@@ -553,7 +553,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv0: BitVec = bit_vec![ ];
     /// let     bv1: BitVec = bit_vec![ true ];
@@ -585,7 +585,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec = bit_vec![ true, false, true ];
     /// assert_eq!( bv.pop(), Some(true) );
@@ -611,7 +611,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u32> = bit_vec![ true ];
     /// assert_eq!( bv.len(), 1 );
@@ -629,7 +629,7 @@ impl<Block: BlockType> BitVec<Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let mut bv: BitVec<u32> = bit_vec![ true ];
     /// assert!( !bv.is_empty() );

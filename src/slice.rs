@@ -159,7 +159,7 @@ impl BlockAddress {
 /// # Examples
 ///
 /// ```
-/// use bv::*;
+/// use nostd_bv::*;
 ///
 /// let array = [0b00110101u16];
 /// let mut slice = array.bit_slice(..8);
@@ -182,7 +182,7 @@ pub struct BitSlice<'a, Block> {
 /// # Examples
 ///
 /// ```
-/// use bv::*;
+/// use nostd_bv::*;
 ///
 /// let mut array = [0b00110101u16];
 ///
@@ -211,7 +211,7 @@ impl<'a, Block: BlockType> BitSlice<'a, Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::{BitSlice, BitSliceable};
+    /// use nostd_bv::{BitSlice, BitSliceable};
     ///
     /// let v = vec![0b01010011u16, 0u16];
     /// let slice = BitSlice::from_slice(&v).bit_slice(..7);
@@ -253,7 +253,7 @@ impl<'a, Block: BlockType> BitSlice<'a, Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let bv: BitVec = bit_vec![ true, true, false, true ];
     /// let slice = bv.bit_slice(..3);
@@ -270,7 +270,7 @@ impl<'a, Block: BlockType> BitSlice<'a, Block> {
     /// # Examples
     ///
     /// ```
-    /// use bv::*;
+    /// use nostd_bv::*;
     ///
     /// let bv: BitVec = bit_vec![ true, true, false, true ];
     /// let slice0 = bv.bit_slice(3..3);

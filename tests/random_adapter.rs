@@ -1,12 +1,12 @@
 // Random testing for bit vector adapters.
 
-extern crate bv;
+extern crate nostd_bv;
 
 #[macro_use]
 extern crate quickcheck;
 
-use bv::adapter::BitSliceAdapter;
-use bv::{BitVec, Bits, BitsExt, BlockType};
+use nostd_bv::adapter::BitSliceAdapter;
+use nostd_bv::{BitVec, Bits, BitsExt, BlockType};
 
 use quickcheck::{Arbitrary, Gen};
 

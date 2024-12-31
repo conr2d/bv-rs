@@ -21,7 +21,7 @@
 //! A first example with [`BitVec`]:
 //!
 //! ```
-//! use bv::BitVec;
+//! use nostd_bv::BitVec;
 //!
 //! let mut bv1: BitVec = BitVec::new_fill(false, 50);
 //! let mut bv2: BitVec = BitVec::new_fill(false, 50);
@@ -39,8 +39,8 @@
 //! Adapters, from [`BitsExt`] and [`adapter`]:
 //!
 //! ```
-//! use bv::*;
-//! use bv::adapter::BoolAdapter;
+//! use nostd_bv::*;
+//! use nostd_bv::adapter::BoolAdapter;
 //!
 //! // Here, we use an `&[u16]` as a bit vector, and we adapt a
 //! // `Vec<bool>` as well.
@@ -58,7 +58,7 @@
 //! allocating an intermediate result:
 //!
 //! ```
-//! use bv::{Bits, BitsExt, BitVec};
+//! use nostd_bv::{Bits, BitsExt, BitVec};
 //!
 //! fn three_way_or<T, U, V>(bv1: T, bv2: U, bv3: V) -> BitVec<T::Block>
 //!     where T: Bits,
@@ -81,7 +81,7 @@
 //! to your `Cargo.toml` and
 //!
 //! ```rust
-//! extern crate bv;
+//! extern crate nostd_bv;
 //! ```
 //!
 //! to your crate root.
