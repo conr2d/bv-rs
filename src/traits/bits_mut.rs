@@ -84,7 +84,7 @@ pub trait BitsMut: Bits {
     }
 }
 
-impl<'a, T: BitsMut + ?Sized> BitsMut for &'a mut T {
+impl<T: BitsMut + ?Sized> BitsMut for &mut T {
     fn set_bit(&mut self, position: u64, value: bool) {
         T::set_bit(*self, position, value);
     }

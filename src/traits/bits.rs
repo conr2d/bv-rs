@@ -140,7 +140,7 @@ pub(crate) fn get_masked_block<T: Bits>(bits: T, position: usize) -> T::Block {
     bits.get_raw_block(position).get_bits(0, block_bits)
 }
 
-impl<'a, T: Bits + ?Sized> Bits for &'a T {
+impl<T: Bits + ?Sized> Bits for &T {
     type Block = T::Block;
 
     fn bit_len(&self) -> u64 {
@@ -168,7 +168,7 @@ impl<'a, T: Bits + ?Sized> Bits for &'a T {
     }
 }
 
-impl<'a, T: Bits + ?Sized> Bits for &'a mut T {
+impl<T: Bits + ?Sized> Bits for &mut T {
     type Block = T::Block;
 
     fn bit_len(&self) -> u64 {

@@ -70,7 +70,7 @@ pub trait BitsExt: Bits {
         Self: Sized,
     {
         let have = self.bit_len();
-        let need = if len > have { len - have } else { 0 };
+        let need = len.saturating_sub(have);
         self.into_bit_concat(BitFill::zeroes(need))
     }
 

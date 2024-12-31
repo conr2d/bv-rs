@@ -68,7 +68,7 @@ impl Arbitrary for Program {
         let choice = g.gen_range(1, 71);
 
         match choice {
-            01..=30 => Constant(RefImpl::arbitrary(g)),
+            1..=30 => Constant(RefImpl::arbitrary(g)),
             31..=35 => Not(recur(g)),
             36..=40 => And(recur(g), recur(g)),
             41..=45 => Or(recur(g), recur(g)),
@@ -92,7 +92,7 @@ impl Arbitrary for Program {
     fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         use Program::*;
 
-        let add = |r: &mut Vec<Program>, p: &Box<Program>| r.push(Program::clone(&**p));
+        let add = |r: &mut Vec<Program>, p: &Program| r.push(Program::clone(p));
 
         let mut res = Vec::new();
 
