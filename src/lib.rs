@@ -71,22 +71,14 @@
 //!
 //! # Usage
 //!
-//! It’s [on crates.io](https://crates.io/crates/bv), so you can add
+//! It’s [on crates.io](https://crates.io/crates/nostd-bv), so you can add
 //!
 //! ```toml
 //! [dependencies]
-//! bv = "0.11.1"
+//! nostd-bv = "0.11"
 //! ```
 //!
-//! to your `Cargo.toml` and
-//!
-//! ```rust
-//! extern crate nostd_bv;
-//! ```
-//!
-//! to your crate root.
-//!
-//! This crate supports Rust version 1.31 and newer.
+//! to your `Cargo.toml`.
 //!
 //! [`BitVec`]: struct.BitVec.html
 //! [`Bits`]: trait.Bits.html
